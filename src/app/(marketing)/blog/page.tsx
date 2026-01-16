@@ -1,55 +1,12 @@
 "use client"
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { Calendar, Clock, ArrowRight, User, Mail, Search, Menu, X, Github, Twitter, Linkedin, ChevronRight } from 'lucide-react';
+import { BLOG_POSTS } from '@/data/blog-posts';
 
-// --- Mock Data ---
-const featuredPost = {
-  id: 1,
-  slug: "evolution-scalable-system-architecture-2026",
-  category: "Engineering",
-  title: "The Evolution of Scalable System Architecture in 2026",
-  excerpt: "Discover how microservices are evolving into modular monoliths and why serverless edge computing is becoming the new standard for high-performance applications.",
-  author: "Alex Chen",
-  date: "Jan 15, 2026",
-  readTime: "8 min read",
-  imageUrl: "https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80"
-};
-
-const posts = [
-  {
-    id: 2,
-    slug: "minimalism-why-less-is-more",
-    category: "Design",
-    title: "Minimalism: Why Less is Still More",
-    excerpt: "Exploring the psychological impact of whitespace in user interfaces and how it improves conversion rates.",
-    author: "Sarah Jones",
-    date: "Jan 12, 2026",
-    readTime: "5 min read",
-    imageUrl: "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 3,
-    slug: "4-day-work-week-case-study",
-    category: "Productivity",
-    title: "The 4-Day Work Week: A Case Study",
-    excerpt: "We analyzed 50 tech companies that switched to a shorter work week. The results on code quality were surprising.",
-    author: "Mike Ross",
-    date: "Jan 10, 2026",
-    readTime: "6 min read",
-    imageUrl: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-  },
-  {
-    id: 4,
-    slug: "ethical-considerations-generative-ai",
-    category: "AI & Future",
-    title: "Ethical Considerations in Generative Models",
-    excerpt: "As AI tools become more integrated into our daily workflows, how do we ensure data privacy and prevent bias?",
-    author: "Emily Wong",
-    date: "Jan 08, 2026",
-    readTime: "10 min read",
-    imageUrl: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-  }
-];
+// Use the first post as featured, and the rest as the post list
+const featuredPost = BLOG_POSTS[0];
+const posts = BLOG_POSTS.slice(1);
 
 const categories = ["All", "Engineering", "Design", "Productivity", "AI & Future"];
 
@@ -115,9 +72,9 @@ const BlogPage = () => {
               </div>
               
               <h2 className="text-3xl lg:text-5xl font-bold text-slate-900 mb-6 leading-tight group-hover:text-blue-600 transition-colors">
-                <a href={`/blog/${featuredPost.slug}`}>
+                <Link href={`/blog/${featuredPost.slug}`}>
                   {featuredPost.title}
-                </a>
+                </Link>
               </h2>
               
               <p className="text-slate-600 mb-8 text-lg lg:text-xl leading-relaxed line-clamp-3">
@@ -135,9 +92,9 @@ const BlogPage = () => {
                   </div>
                 </div>
                 {/* Read More Button */}
-                <a href={`/blog/${featuredPost.slug}`} className="inline-flex items-center justify-center h-12 w-12 rounded-full border border-slate-200 text-slate-400 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
+                <Link href={`/blog/${featuredPost.slug}`} className="inline-flex items-center justify-center h-12 w-12 rounded-full border border-slate-200 text-slate-400 group-hover:bg-blue-600 group-hover:text-white group-hover:border-blue-600 transition-all duration-300">
                   <ArrowRight size={20} />
-                </a>
+                </Link>
               </div>
             </div>
           </div>
@@ -153,7 +110,7 @@ const BlogPage = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-10 mb-32">
           {posts.map((post) => (
-            <article key={post.id} className="group flex flex-col h-full bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 border border-slate-100 transition-all duration-300 hover:-translate-y-1">
+            <article key={post.slug} className="group flex flex-col h-full bg-white rounded-3xl p-5 shadow-sm hover:shadow-xl hover:shadow-slate-200/60 border border-slate-100 transition-all duration-300 hover:-translate-y-1">
               <div className="relative h-64 overflow-hidden rounded-2xl mb-6">
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors z-10" />
                 <img 
@@ -173,9 +130,9 @@ const BlogPage = () => {
                 </div>
 
                 <h3 className="text-xl lg:text-2xl font-bold text-slate-900 mb-3 leading-snug group-hover:text-blue-600 transition-colors">
-                  <a href={`/blog/${post.slug}`}>
+                  <Link href={`/blog/${post.slug}`}>
                     {post.title}
-                  </a>
+                  </Link>
                 </h3>
                 <p className="text-slate-600 mb-6 line-clamp-3 text-sm lg:text-base leading-relaxed">
                   {post.excerpt}
@@ -183,9 +140,9 @@ const BlogPage = () => {
 
                 <div className="mt-auto pt-4 border-t border-slate-50 flex items-center justify-between">
                    <span className="text-sm font-bold text-slate-800">{post.author}</span>
-                   <a href={`/blog/${post.slug}`} className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center">
+                   <Link href={`/blog/${post.slug}`} className="text-sm font-bold text-blue-600 hover:text-blue-700 flex items-center">
                      Read article <ArrowRight size={14} className="ml-1" />
-                   </a>
+                   </Link>
                 </div>
               </div>
             </article>

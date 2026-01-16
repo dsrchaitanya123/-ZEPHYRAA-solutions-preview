@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/* Keep all your custom @layer base and @layer utilities below this line */
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #0f172a;
+  }
+  /* ... rest of your code */
+}
+
+/* -------------------------------
+   0. CSS Variables for Dark/Light
+--------------------------------- */
+:root {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(0, 0, 0, 0.05);
+}
+
+html.dark {
+  --background: #020617;
+  --foreground: #f1f5f9;
+  --card-bg: linear-gradient(145deg, rgba(30,41,59,0.4), rgba(15,23,42,0.4));
+  --glass-bg: rgba(15,23,42,0.6);
+  --border-color: rgba(255,255,255,0.05);
+}
+
+/* -------------------------------
+   1. Base styles
+--------------------------------- */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s cubic-bezier(0.4,0,0.2,1),
+              color 0.3s cubic-bezier(0.4,0,0.2,1);
+  min-height: 100vh;
+  margin: 0;
+  font-smooth: antialiased;
+}
+
+/* -------------------------------
+   2. Utilities / Glassmorphism
+--------------------------------- */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-color);
+}
+
+.glass-card {
+  background: var(--card-bg);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid var(--border-color);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+/* Text Gradients */
+.text-gradient {
+  background: linear-gradient(to right, #06b6d4, #8b5cf6);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.zephyraa-text {
+  background: linear-gradient(135deg, #6a11cb 0%, #ff00cc 50%, #ffcc33 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.1));
+}
+
+/* -------------------------------
+   3. Animations
+--------------------------------- */
+@keyframes blob {
+  0% { transform: translate(0px,0px) scale(1); }
+  33% { transform: translate(30px,-50px) scale(1.1); }
+  66% { transform: translate(-20px,20px) scale(0.9); }
+  100% { transform: translate(0px,0px) scale(1); }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0%); }
+  to { transform: translateX(-100%); }
+}
+
+.animate-blob { animation: blob 10s infinite; }
+.animate-marquee { animation: marquee 25s linear infinite; }
+.animation-delay-2000 { animation-delay: 2s; }
+.animation-delay-4000 { animation-delay: 4s; }
+
+/* -------------------------------
+   4. Scrollbar
+--------------------------------- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+  background: #cbd5e1; border-radius: 20px; border: 2px solid transparent; 
+  background-clip: content-box;
+}
+html.dark ::-webkit-scrollbar-thumb { background: #334155; }
+::-webkit-scrollbar-thumb:hover { background: #06b6d4; }

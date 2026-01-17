@@ -87,7 +87,7 @@ export default function Pricing() {
 
                 {/* CTA Button */}
                 <a
-                  href="#contact"
+                  href="/contact"
                   className={`group relative flex items-center justify-center gap-2 w-full py-5 text-center rounded-2xl font-bold transition-all duration-300 transform hover:-translate-y-1 active:scale-95 ${
                     isMiddle
                       ? "bg-cyan-500 text-white shadow-xl shadow-cyan-500/30 hover:bg-cyan-600"
@@ -109,7 +109,7 @@ export default function Pricing() {
               <span className="text-sm font-semibold">Secure Payments</span>
            </div>
            <div className="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-700 hidden md:block"></div>
-           <p className="text-sm font-medium">Need a custom quote? <a href="#contact" className="text-cyan-500 underline underline-offset-4">Talk to us</a></p>
+           <p className="text-sm font-medium">Need a custom quote? <a href="/contact" className="text-cyan-500 underline underline-offset-4">Talk to us</a></p>
         </div>
       </div>
     </section>

@@ -1,54 +1,107 @@
-// data/services.ts
-import { 
-  Rocket, 
-  Layers, 
-  Cpu, 
-  Globe, 
-  Zap, 
-  BarChart3 
-} from "lucide-react";
+// @data/about.ts
 
-export const services = [
+import { 
+  Globe, Cpu, Layers, Code, Zap, Shield, Database, Terminal
+} from 'lucide-react';
+
+export const BRAND_DATA = {
+  name: "Zephyraa Software Private Limited",
+  founded: 2026,
+  tagline: "Breezing Through Complexity.",
+  contactEmail: "pasupuladharaniswarreddy@outlook.com",
+  instagram: "https://www.instagram.com/zephyraa_solutions",
+  location: "Kavali, India"
+};
+
+export const HERO_CONTENT = {
+  badge: "Full-Cycle Engineering",
+  title: "We Build Stateful Software",
+  titleAccent: "That Actually Ships.",
+  description: "We handle architecture, implementation, security, and deployment with enterprise-grade rigor.",
+  stats: [
+    {
+      icon: Globe,
+      label: "Global Solutions",
+      sublabel: "Cross-region deployment & scaling"
+    },
+    {
+      icon: Terminal,
+      label: "Practical Engineering",
+      sublabel: "Code that solves business logic"
+    },
+    {
+      icon: Shield,
+      label: "Secure by Design",
+      sublabel: "Security-first build methodology"
+    }
+  ]
+};
+
+export const SERVICES = [
   {
-    id: "digital-strategy",
-    title: "Digital Strategy",
-    description: "We craft data-driven roadmaps that align your brand with market opportunities and user needs.",
-    icon: Rocket,
-    gradient: "from-purple-500 to-pink-500",
+    icon: Code,
+    title: "Product Engineering",
+    desc: "From MVP to production-grade platforms, engineered with disciplined delivery pipelines.",
+    tags: ["React", "Next.js", "Node", "CI/CD"]
   },
   {
-    id: "web-development",
-    title: "Web Development",
-    description: "High-performance, scalable web applications built with modern frameworks like Next.js and Tailwind CSS.",
-    icon: Globe,
-    gradient: "from-pink-500 to-orange-500",
+    icon: Database,
+    title: "Cloud & Data Systems",
+    desc: "Distributed infra, optimized queries, and reproducible deployment pipelines for serious scale.",
+    tags: ["PostgreSQL", "Redis", "Docker", "Kubernetes"]
   },
   {
-    id: "ui-ux-design",
-    title: "UI/UX Design",
-    description: "Immersive digital experiences focused on user-centric design principles and aesthetic excellence.",
-    icon: Layers,
-    gradient: "from-orange-500 to-yellow-500",
-  },
-  {
-    id: "ai-integration",
-    title: "AI Solutions",
-    description: "Leveraging machine learning and automation to streamline your business workflows and decision making.",
     icon: Cpu,
-    gradient: "from-yellow-500 to-orange-500",
+    title: "IT Transformation",
+    desc: "Migration from legacy systems, API modernization, and operational automation.",
+    tags: ["Python", "REST", "Microservices"]
   },
   {
-    id: "brand-identity",
-    title: "Brand Identity",
-    description: "Visual storytelling that makes your brand unforgettable through logos, typography, and color systems.",
+    icon: Layers,
+    title: "Custom Integrations",
+    desc: "Payment gateways, vendor APIs, auth systems, and enterprise tooling.",
+    tags: ["OAuth2", "GraphQL", "Webhooks"]
+  },
+  {
     icon: Zap,
-    gradient: "from-purple-600 to-indigo-600",
+    title: "Rapid Deployment",
+    desc: "Build-test-ship in iterative loops that reduce development uncertainty.",
+    tags: ["Agile", "CI/CD", "Testing"]
   },
   {
-    id: "growth-marketing",
-    title: "Growth Marketing",
-    description: "Scaling your reach through optimized SEO, performance marketing, and conversion rate optimization.",
-    icon: BarChart3,
-    gradient: "from-blue-500 to-cyan-500",
+    icon: Shield,
+    title: "Security Hardening",
+    desc: "Audit, monitoring, secrets management, compliance patterns, and intrusion reduction.",
+    tags: ["Zero Trust", "TLS", "Audits"]
+  }
+];
+
+export const TECH_STACK = [
+  {
+    title: "Frontend",
+    icon: Code,
+    items: ["React", "Next.js", "Tailwind", "TypeScript"]
   },
+  {
+    title: "Backend",
+    icon: Cpu,
+    items: ["Node.js", "Python", "Express", "FastAPI"]
+  },
+  {
+    title: "Databases",
+    icon: Database,
+    items: ["PostgreSQL", "MongoDB", "Redis"]
+  },
+  {
+    title: "Infrastructure",
+    icon: Terminal,
+    items: ["Docker", "NGINX", "Cloudflare", "CI/CD"]
+  }
+];
+
+export const PROCESS_STEPS = [
+  { num: "01", title: "Discovery", desc: "We dissect your problem statement, understanding the core business logic before writing code." },
+  { num: "02", title: "Architecture", desc: "Designing scalable schemas and selecting the right tech stack for future-proof performance." },
+  { num: "03", title: "Development", desc: "Agile sprints with regular updates. We build, test, and refine in real-time loops." },
+  { num: "04", title: "Deployment", desc: "Seamless CI/CD pipelines ensuring your product hits the market with zero downtime." }
 ];

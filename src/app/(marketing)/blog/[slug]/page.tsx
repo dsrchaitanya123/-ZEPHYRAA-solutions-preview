@@ -2,18 +2,18 @@
 import React, { useEffect, useState } from 'react';
 import { notFound } from 'next/navigation';
 import { 
-  Calendar, Clock, ArrowLeft, Facebook, Twitter, 
-  Linkedin, Link as LinkIcon, Share2
+  Calendar, Clock, ArrowLeft, Link as LinkIcon,  
 } from 'lucide-react';
 import { BLOG_POSTS, BlogPost } from '@/data/blog-posts';
 
 interface BlogPostPageProps {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 }
 
-const BlogPostPage: React.FC<BlogPostPageProps> = ({ params }) => {
+const BlogPostPage: React.FC<BlogPostPageProps> = ({ params: paramPromise }) => {
+  const params = React.use(paramPromise);
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [notFoundError, setNotFoundError] = useState<boolean>(false);
@@ -56,9 +56,7 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({ params }) => {
             Back to Blog
           </a>
           <div className="flex gap-4">
-             <button className="text-slate-400 hover:text-slate-900 dark:text-slate-600 dark:hover:text-slate-100" aria-label="Share">
-                <Share2 size={20} />
-             </button>
+              
           </div>
         </div>
       </nav>
@@ -112,27 +110,7 @@ const BlogPostPage: React.FC<BlogPostPageProps> = ({ params }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
             
             {/* Sidebar (Share & TOC) */}
-            <aside className="hidden lg:block lg:col-span-3">
-               <div className="sticky top-24 space-y-8">
-                 <div>
-                   <p className="text-xs font-bold text-slate-400 dark:text-slate-600 uppercase tracking-widest mb-4">Share</p>
-                   <div className="flex flex-col gap-3">
-                      <button className="flex items-center text-slate-600 dark:text-slate-400 hover:text-[#1DA1F2] dark:hover:text-[#1DA1F2] transition-colors gap-3 text-sm font-medium">
-                        <Twitter size={18} /> Twitter
-                      </button>
-                      <button className="flex items-center text-slate-600 dark:text-slate-400 hover:text-[#4267B2] dark:hover:text-[#4267B2] transition-colors gap-3 text-sm font-medium">
-                        <Facebook size={18} /> Facebook
-                      </button>
-                      <button className="flex items-center text-slate-600 dark:text-slate-400 hover:text-[#0077b5] dark:hover:text-[#0077b5] transition-colors gap-3 text-sm font-medium">
-                        <Linkedin size={18} /> LinkedIn
-                      </button>
-                      <button className="flex items-center text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors gap-3 text-sm font-medium">
-                        <LinkIcon size={18} /> Copy Link
-                      </button>
-                   </div>
-                 </div>
-               </div>
-            </aside>
+            
 
             {/* Content Body */}
             <article className="lg:col-span-9">

@@ -1,19 +1,16 @@
 "use client";
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useRef } from 'react';
 import { 
-  ArrowRight, 
+  ArrowUpRight, 
   Loader2, 
   CheckCircle2, 
-  User, 
-  Mail, 
-  MessageSquare,
-  Globe,
-  MapPin,
-  Briefcase,
-  Layers
+  Search,
+  ChevronDown,
+  X
 } from 'lucide-react';
 
-// Type definition for country data
+// --- Types ---
 interface Country {
   name: string;
   code: string;
@@ -21,41 +18,66 @@ interface Country {
   cca2: string;
 }
 
-export default function ProfessionalSquareForm({ className = "" }: { className?: string }) {
-  const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
-  const [service, setService] = useState("");
+// --- Constants ---
+const PRIORITY_COUNTRIES = ['IN', 'US', 'GB', 'AE', 'CA', 'AU'];
 
-  // Country API State
+export default function WhiteModernForm({ className = "" }: { className?: string }) {
+  const [formState, setFormState] = useState<'idle' | 'loading' | 'success'>('idle');
+  
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    service: '',
+    businessType: '',
+    location: '',
+    message: ''
+  });
+
+  // Country API & Search State
   const [countries, setCountries] = useState<Country[]>([]);
   const [loadingCountries, setLoadingCountries] = useState(true);
-  const [selectedCountry, setSelectedCountry] = useState<string>("+91");
+  const [selectedCountry, setSelectedCountry] = useState<Country>({ name: "India", code: "+91", flag: "https://flagcdn.com/in.svg", cca2: "IN" });
+  
+  // Dropdown specific state
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Fetch Country Codes on Mount
+  // --- Fetch Countries ---
   useEffect(() => {
     const fetchCountries = async () => {
       try {
         const response = await fetch('https://restcountries.com/v3.1/all?fields=name,idd,flags,cca2');
         const data = await response.json();
         
-        const formattedCountries = data
+        const formatted: Country[] = data
           .filter((c: any) => c.idd.root)
           .map((c: any) => ({
             name: c.name.common,
             code: `${c.idd.root}${c.idd.suffixes ? c.idd.suffixes[0] : ''}`, 
             flag: c.flags.svg,
             cca2: c.cca2
-          }))
-          .sort((a: Country, b: Country) => a.name.localeCompare(b.name));
+          }));
 
-        setCountries(formattedCountries);
-        setLoadingCountries(false);
+        // Sort: Priority first, then Alphabetical
+        formatted.sort((a, b) => {
+          const indexA = PRIORITY_COUNTRIES.indexOf(a.cca2);
+          const indexB = PRIORITY_COUNTRIES.indexOf(b.cca2);
+          if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+          if (indexA !== -1) return -1;
+          if (indexB !== -1) return 1;
+          return a.name.localeCompare(b.name);
+        });
+
+        setCountries(formatted);
+        const defaultCountry = formatted.find(c => c.cca2 === 'IN') || formatted[0];
+        if (defaultCountry) setSelectedCountry(defaultCountry);
+        
       } catch (error) {
-        console.error("Failed to fetch country codes", error);
-        setCountries([
-            { name: "India", code: "+91", flag: "", cca2: "IN" },
-            { name: "USA", code: "+1", flag: "", cca2: "US" },
-            { name: "UK", code: "+44", flag: "", cca2: "GB" }
-        ]);
+        console.error("Failed to load countries", error);
+      } finally {
         setLoadingCountries(false);
       }
     };
@@ -63,209 +85,261 @@ export default function ProfessionalSquareForm({ className = "" }: { className?:
     fetchCountries();
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setFormState('loading');
-    console.log("Service Selected:", service);
-    setTimeout(() => setFormState('success'), 2000);
+  // --- Click Outside to Close Dropdown ---
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // --- Filtering Logic ---
+  const filteredCountries = countries.filter(c => 
+    c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    c.code.includes(searchQuery) ||
+    c.cca2.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // --- Success State View ---
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormState('loading');
+    await new Promise(r => setTimeout(r, 2000)); // Simulate API
+    setFormState('success');
+  };
+
+  // --- Styles (Light Mode) ---
+  const inputGroupStyles = "relative group";
+  // Border bottom only, light colors
+  const inputStyles = "w-full bg-transparent border-b border-slate-300 text-slate-900 text-sm py-3 focus:border-emerald-500 outline-none transition-colors placeholder:text-slate-400";
+
+  // --- Success View ---
   if (formState === 'success') {
     return (
-      <div className={`p-4 md:p-0 ${className}`}>
-        <div className="bg-white border border-slate-200 p-8 rounded-lg shadow-lg flex flex-col items-center justify-center text-center animate-in fade-in zoom-in duration-300 max-w-lg mx-auto mt-10">
-          <div className="w-16 h-16 bg-violet-50 text-violet-600 rounded-full flex items-center justify-center mb-4 ring-4 ring-violet-100">
-            <CheckCircle2 size={32} strokeWidth={2} />
+      <div className={`flex justify-center items-center min-h-[400px] bg-white p-6  border border-slate-200 shadow-xl ${className}`}>
+        <div className="text-center animate-in fade-in zoom-in duration-500">
+          <div className="w-16 h-16 bg-emerald-50 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4 border border-emerald-100">
+            <CheckCircle2 size={32} />
           </div>
-          <h3 className="text-xl font-bold text-slate-900 mb-2">Submission Received</h3>
-          <p className="text-slate-500 text-sm mb-6 leading-relaxed">Your details have been securely transmitted to our team. We will review your request and respond shortly.</p>
+          <h3 className="text-xl font-bold text-slate-900 mb-2">Message Sent!</h3>
+          <p className="text-slate-500 text-sm mb-6">Our team will connect with you shortly.</p>
           <button 
-            onClick={() => {
-              setFormState('idle');
-              setService("");
-            }}
-            className="w-full md:w-auto text-violet-700 text-sm font-semibold hover:text-violet-900 flex items-center justify-center gap-2 transition-colors rounded-md px-6 py-3 bg-violet-50 hover:bg-violet-100"
+            onClick={() => setFormState('idle')}
+            className="text-emerald-600 font-semibold text-sm hover:text-emerald-700 transition-colors"
           >
-            Reset Form <ArrowRight size={16}/>
+            Send another message
           </button>
         </div>
       </div>
     );
   }
 
-  // --- Optimized Styles for Mobile ---
-  // text-base on mobile is CRITICAL to prevent iOS auto-zoom on focus
-  const inputClasses = "w-full bg-white border border-slate-300 rounded-lg pl-11 pr-4 py-3.5 md:py-2.5 text-base md:text-sm text-slate-900 focus:border-violet-600 focus:ring-1 focus:ring-violet-600 outline-none transition-all placeholder:text-slate-400 shadow-sm appearance-none";
-  
-  // Adjusted icon position for taller mobile inputs
-  const iconClasses = "absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-violet-600 transition-colors";
-  
-  const labelClasses = "block text-xs font-bold text-slate-700 mb-1.5 ml-1 uppercase tracking-wider";
-
   return (
-    <div className={`w-full flex justify-center ${className}`}>
+    <div className={`relative w-full max-w-md mx-auto ${className}`}>
       
-      <div className="w-full max-w-xl bg-white md:border md:border-slate-200 md:rounded-xl md:shadow-lg p-5 pb-10 md:p-8">
+      {/* Container - White BG, clean shadow */}
+      <div className="relative bg-white p-8 md:p-10   border border-slate-200 shadow-xl shadow-slate-200/50">
         
         {/* Header */}
-        <div className="mb-8 border-b border-slate-100 pb-5">
-          <h3 className="text-2xl md:text-xl font-bold text-slate-900 tracking-tight">
-            Corporate Inquiry
-          </h3>
-          <p className="text-slate-500 text-sm mt-2">
-            Please provide your business details below.
-          </p>
-        </div>
+        <h2 className="text-3xl font-bold text-slate-900 mb-2">
+          Drop Us a Message
+        </h2>
+        <p className="text-slate-500 text-xs mb-8">
+          We'd love to hear from you. Fill out the form below.
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* Row 1: Name & Email - Stacks on mobile */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-4">
-            <div className="group relative">
-              <label className={labelClasses}>Full Name <span className="text-red-500">*</span></label>
-              <div className="relative">
-                <div className={iconClasses}>
-                  <User size={18} strokeWidth={2} />
-                </div>
-                <input required type="text" className={inputClasses} placeholder="John Doe" />
-              </div>
-            </div>
-
-            <div className="group relative">
-              <label className={labelClasses}>Work Email <span className="text-red-500">*</span></label>
-              <div className="relative">
-                <div className={iconClasses}>
-                  <Mail size={18} strokeWidth={2} />
-                </div>
-                <input required type="email" inputMode="email" className={inputClasses} placeholder="john@company.com" />
-              </div>
-            </div>
+          {/* Name */}
+          <div className={inputGroupStyles}>
+            <input 
+              name="name" 
+              required 
+              placeholder="Name*" 
+              className={inputStyles} 
+              onChange={handleChange}
+            />
           </div>
 
-          {/* Row 2: Phone with API Dropdown */}
-          <div>
-             <label className={labelClasses}>Phone Number <span className="text-red-500">*</span></label>
-             <div className="flex gap-3">
-                {/* Country Code Select - Fixed Width but flexible content */}
-                <div className="relative w-[110px] sm:w-[130px] shrink-0 group">
-                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 group-focus-within:text-violet-600 z-10">
-                      {loadingCountries ? <Loader2 size={16} className="animate-spin"/> : <Globe size={18} strokeWidth={2} />}
-                   </div>
-                   <select 
-                      value={selectedCountry}
-                      onChange={(e) => setSelectedCountry(e.target.value)}
-                      className="w-full bg-white border border-slate-300 rounded-lg pl-9 pr-2 py-3.5 md:py-2.5 text-base md:text-sm text-slate-900 focus:border-violet-600 focus:ring-1 focus:ring-violet-600 outline-none appearance-none cursor-pointer transition-all shadow-sm"
-                    >
-                        {loadingCountries ? (
-                          <option>...</option>
-                        ) : (
-                          countries.map((country, idx) => (
-                            <option key={`${country.cca2}-${idx}`} value={country.code}>
-                              {country.cca2} ({country.code})
-                            </option>
-                          ))
-                        )}
-                   </select>
-                </div>
-
-                {/* Phone Input */}
-                <div className="relative w-full group">
-                   <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 group-focus-within:text-violet-600 transition-colors">
-                      <span className="text-xs font-semibold mr-1 text-slate-500 group-focus-within:text-violet-600">{selectedCountry}</span>
-                   </div>
-                   <input required type="tel" inputMode="tel" className={`${inputClasses} pl-16`} placeholder="98765 43210" />
-                </div>
-             </div>
-          </div>
-
-          {/* Row 3: Service & Location */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-4">
-            <div className="group relative">
-              <label className={labelClasses}>Service Required <span className="text-red-500">*</span></label>
-              <div className="relative">
-                <div className={iconClasses}>
-                  <Layers size={18} strokeWidth={2} />
-                </div>
-                
-                <select 
-                  required
-                  value={service} 
-                  onChange={(e) => setService(e.target.value)}
-                  className={`${inputClasses} cursor-pointer`}
-                >
-                    <option value="" disabled>Select Service</option>
-                    <option value="web-design">Web Design</option>
-                    <option value="seo">SEO</option>
-                    <option value="app-dev">App Development</option>
-                    <option value="enterprise">Enterprise Software</option>
-                    <option value="cloud">Cloud Solutions</option>
-                </select>
-
-                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-slate-500">
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth="2"><path strokeLinecap="square" strokeLinejoin="miter" d="M19 9l-7 7-7-7"></path></svg>
-                </div>
-              </div>
-            </div>
+          {/* Phone Row (Custom Dropdown + Number) */}
+          <div className="flex items-end gap-4">
             
-            <div className="group relative">
-              <label className={labelClasses}>Location</label>
-              <div className="relative">
-                <div className={iconClasses}>
-                  <MapPin size={18} strokeWidth={2} />
-                </div>
-                <input type="text" className={inputClasses} placeholder="City, Country" />
+            {/* Custom Country Dropdown */}
+            <div className="relative w-[110px] shrink-0" ref={dropdownRef}>
+              <div 
+                onClick={() => !loadingCountries && setIsDropdownOpen(!isDropdownOpen)}
+                className={`flex items-center justify-between gap-2 py-3 border-b ${isDropdownOpen ? 'border-emerald-500' : 'border-slate-300'} cursor-pointer hover:border-emerald-400 transition-colors`}
+              >
+                {loadingCountries ? (
+                  <Loader2 size={16} className="animate-spin text-emerald-500" />
+                ) : (
+                  <>
+                    <div className="flex items-center gap-2">
+                      <img 
+                        src={selectedCountry.flag} 
+                        alt="Flag" 
+                        className="w-5 h-3.5 object-cover rounded-[1px] shadow-sm" 
+                      />
+                      <span className="text-slate-900 text-sm font-medium">{selectedCountry.code}</span>
+                    </div>
+                    <ChevronDown size={14} className={`text-slate-400 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                  </>
+                )}
               </div>
+
+              {/* The Dropdown Menu */}
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 z-50 mt-1 w-[260px] bg-white rounded-lg shadow-xl border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
+                  {/* Search Box */}
+                  <div className="p-2 border-b border-slate-100 sticky top-0 bg-white rounded-t-lg">
+                    <div className="relative">
+                      <Search size={14} className="absolute left-2.5 top-2.5 text-slate-400" />
+                      <input 
+                        autoFocus
+                        type="text"
+                        placeholder="Search country..."
+                        className="w-full bg-slate-50 border border-slate-200 rounded-md py-1.5 pl-8 pr-3 text-xs focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* List */}
+                  <div className="max-h-[200px] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200">
+                    {filteredCountries.length > 0 ? (
+                      filteredCountries.map((c, i) => (
+                        <div 
+                          key={i}
+                          onClick={() => {
+                            setSelectedCountry(c);
+                            setIsDropdownOpen(false);
+                            setSearchQuery("");
+                          }}
+                          className="flex items-center gap-3 px-3 py-2 hover:bg-emerald-50 cursor-pointer transition-colors"
+                        >
+                          <img src={c.flag} alt="" className="w-5 h-3.5 object-cover rounded-[1px]" />
+                          <span className="text-slate-600 text-xs">{c.name}</span>
+                          <span className="text-slate-400 text-xs ml-auto">{c.code}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <div className="px-3 py-4 text-center text-xs text-slate-400">
+                        No countries found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Phone Number Input */}
+            <div className={`${inputGroupStyles} w-full`}>
+               <input 
+                 name="phone" 
+                 required 
+                 type="tel"
+                 placeholder="Phone No*" 
+                 className={inputStyles} 
+                 onChange={handleChange}
+               />
             </div>
           </div>
 
-          {/* Business Info */}
-          <div className="group relative">
-              <label className={labelClasses}>Company Name</label>
-              <div className="relative">
-                <div className={iconClasses}>
-                  <Briefcase size={18} strokeWidth={2} />
-                </div>
-                <input type="text" className={inputClasses} placeholder="Organization Name" />
-              </div>
-          </div>
-
-          {/* Message Area */}
-          <div className="group relative">
-            <label className={labelClasses}>Project Brief <span className="text-red-500">*</span></label>
-            <div className="relative">
-              <div className="absolute top-3.5 left-3.5 text-slate-400 group-focus-within:text-violet-600 transition-colors pointer-events-none">
-                <MessageSquare size={18} strokeWidth={2} />
-              </div>
-              <textarea 
-                rows={4} 
-                required
-                className={`${inputClasses} resize-y min-h-[120px]`}
-                placeholder="Please describe your project requirements..." 
+          {/* Email & Service Row */}
+          <div className="flex flex-col md:flex-row gap-6 md:gap-4">
+            <div className={`${inputGroupStyles} w-full md:w-1/2`}>
+              <input 
+                name="email" 
+                required 
+                type="email"
+                placeholder="Email*" 
+                className={inputStyles} 
+                onChange={handleChange}
               />
             </div>
+            
+            <div className={`${inputGroupStyles} w-full md:w-1/2`}>
+               <select 
+                 name="service"
+                 required
+                 className={`${inputStyles} cursor-pointer appearance-none text-slate-500 focus:text-emerald-600`}
+                 onChange={handleChange}
+                 defaultValue=""
+               >
+                 <option value="" disabled hidden>Service*</option>
+                 <option value="web">Web Design & Dev</option>
+                 <option value="app">App Development</option>
+                 <option value="seo">SEO & Marketing</option>
+                 <option value="uiux">UI/UX Design</option>
+               </select>
+               {/* Custom Arrow for Select */}
+               <div className="absolute right-0 bottom-4 pointer-events-none text-slate-400">
+                 <svg width="10" height="6" viewBox="0 0 10 6" fill="currentColor">
+                   <path d="M5 6L0 0H10L5 6Z"/>
+                 </svg>
+               </div>
+            </div>
           </div>
 
-          {/* Mobile-Optimized Button */}
-          <div className="pt-2">
+          {/* Business Type */}
+          <div className={inputGroupStyles}>
+            <input 
+              name="businessType" 
+              placeholder="Which Business do you have?*" 
+              className={inputStyles} 
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Location */}
+          <div className={inputGroupStyles}>
+            <input 
+              name="location" 
+              required
+              placeholder="Location*" 
+              className={inputStyles} 
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Message */}
+          <div className={inputGroupStyles}>
+            <textarea 
+              name="message" 
+              required
+              rows={1}
+              placeholder="Message*" 
+              className={`${inputStyles} resize-none min-h-[40px]`} 
+              onChange={handleChange}
+            />
+          </div>
+
+          {/* Submit Button */}
+          <div className="pt-4">
             <button 
               type="submit"
               disabled={formState === 'loading'}
-              className="w-full bg-gradient-to-r from-violet-600 to-pink-600 hover:from-violet-700 hover:to-pink-700 text-white font-bold text-base py-4 md:py-3.5 rounded-lg transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl active:scale-[0.99] disabled:opacity-70 disabled:cursor-not-allowed group touch-manipulation"
+              // Using emerald-400 for that "Neon-ish" look but readable on white, or stick to the exact green from the image
+              className="w-full   bg-gradient-to-r from-purple-600 via-pink-500 to-orange-400 animate-gradient-x hover:bg-[#3ecf73] text-emerald-950 font-bold py-4 px-6 rounded-md transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:cursor-not-allowed shadow-md shadow-pink-500"
             >
               {formState === 'loading' ? (
                 <Loader2 size={20} className="animate-spin" />
               ) : (
                 <>
-                  <span>Submit Inquiry</span>
-                  <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform"/>
+                  <span className="uppercase tracking-wide text-sm text-white">Connect With Zephyraa Today</span>
+                  <ArrowUpRight size={20} className="group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform text-white   " />
                 </>
               )}
             </button>
-            <p className="text-center text-xs text-slate-400 mt-4 leading-relaxed px-4">
-                By submitting this form, you acknowledge that you agree to our <span className="underline cursor-pointer">Privacy Policy</span>.
-            </p>
           </div>
+
         </form>
       </div>
     </div>

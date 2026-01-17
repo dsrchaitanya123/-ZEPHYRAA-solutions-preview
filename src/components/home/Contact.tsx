@@ -18,7 +18,7 @@ export default function Contact() {
             {contactData.email}
           </a>
           <a
-            href="#"
+            href="/contact"
             className="w-full md:w-auto px-10 py-5 border border-black/20 dark:border-white/20 rounded-full font-bold text-lg hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition hoverable"
           >
             {contactData.btn}

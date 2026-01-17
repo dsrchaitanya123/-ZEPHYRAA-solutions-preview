@@ -9,7 +9,7 @@ export default function Showreel() {
   const { image, label, title, videoUrl } = showreelData;
 
   return (
-    <section className="py-12 px-6 lg:py-24">
+    <section id="Showreel" className="py-12 px-6 lg:py-24">
       <div 
         className="group relative mx-auto max-w-7xl cursor-pointer overflow-hidden rounded-[2.5rem] h-[45vh] md:h-[75vh] md:rounded-[3.5rem] bg-zinc-900"
         data-aos="fade-up"

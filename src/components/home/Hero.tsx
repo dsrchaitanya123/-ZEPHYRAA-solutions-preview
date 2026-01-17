@@ -25,7 +25,7 @@ export default function Hero() {
   if (!mounted) return <section className="min-h-screen bg-white dark:bg-[#050505]" />;
 
   return (
-    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden transition-colors duration-500 bg-white dark:bg-[#050505]">
+    <section className="relative min-h-screen flex items-center overflow-hidden transition-colors duration-500 bg-white dark:bg-[#050505]">
       
 
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -64,18 +64,18 @@ export default function Hero() {
           </p>
 
           <div className="flex flex-wrap gap-5">
-            <button className="group relative px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.1)] active:scale-95">
+            <a href="/contact" className="group relative px-10 py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.3)] dark:hover:shadow-[0_20px_40px_-15px_rgba(255,255,255,0.1)] active:scale-95">
               <span className="relative z-10">{heroData.primaryBtn}</span>
               <div className="absolute inset-0 bg-cyan-500 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </button>
+            </a>
 
-            <button className="group px-10 py-5 border-2 border-slate-200 dark:border-white/10 rounded-2xl font-bold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 flex items-center gap-3 active:scale-95">
+            <a href="/#Showreel" className="group px-10 py-5 border-2 border-slate-200 dark:border-white/10 rounded-2xl font-bold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-white/5 transition-all duration-300 flex items-center gap-3 active:scale-95">
                <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center group-hover:bg-cyan-500 group-hover:text-white transition-colors">
 
                  <Play className="w-3 h-3 fill-current ml-0.5" />
                </div>
               {heroData.secondaryBtn}
-            </button>
+            </a>
           </div>
         </div>
 

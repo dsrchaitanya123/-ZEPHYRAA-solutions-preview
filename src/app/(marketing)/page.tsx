@@ -1,10 +1,9 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react"; // Added useState
 import AOS from "aos";
 import "aos/dist/aos.css"; 
 
 // Components
-// Loader import removed
 import Hero from "@/components/home/Hero";
 import Marquee from "@/components/home/Marquee";
 import Agency from "@/components/home/Agency";
@@ -16,9 +15,22 @@ import Pricing from "@/components/home/Pricing";
 import FAQ from "@/components/home/FAQ";
 import Contact from "@/components/home/Contact";
 import Noise from "@/components/ui/Noise";
+import Loader from "@/components/ui/Loader";
 
 export default function Home() {
+  const [showLoader, setShowLoader] = useState(false);
+
   useEffect(() => {
+    // 1. Check if the user has already seen the loader in this session
+    const hasSeenLoader = sessionStorage.getItem("hasSeenLoader");
+
+    if (!hasSeenLoader) {
+      setShowLoader(true);
+      // 2. Set the flag so it doesn't show again until the tab is closed
+      sessionStorage.setItem("hasSeenLoader", "true");
+    }
+
+    // Initialize AOS
     AOS.init({
       once: false,
       mirror: true,
@@ -29,25 +41,25 @@ export default function Home() {
   }, []);
 
   return (
-    <main className="overflow-hidden bg-slate-50 text-slate-900 dark:bg-[#020617] dark:text-white selection:bg-cyan-500 selection:text-white transition-colors duration-500">
-      {/* UI Utilities */}
-      {/* Loader removed from here */}
+    <>
+      {/* 3. Only render Loader if showLoader is true */}
+      {showLoader && <Loader />} 
       
-      <Noise />
-      <div className="watermark-repeated"></div>
+      <main className="overflow-hidden bg-white text-slate-900 selection:bg-cyan-500 selection:text-white">
+        <Noise />
+        <div className="watermark-repeated"></div>
 
-      {/* Page Sections */}
-      <Hero />
-      <Marquee />
-      <Agency />
-      <Services />
-      <Showreel />
-      <Process />
-      <Work />
-
-      <Pricing />
-      <FAQ />
-      <Contact />
-    </main>
+        <Hero />
+        <Marquee />
+        <Agency />
+        <Services />
+        <Showreel />
+        <Process />
+        <Work />
+        <Pricing />
+        <FAQ />
+        <Contact />
+      </main>
+    </>
   );
 }

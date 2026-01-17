@@ -10,44 +10,47 @@ export default function FAQ() {
   };
 
   return (
-    <section className="py-16 md:py-24 px-6 max-w-4xl mx-auto">
+    // Added bg-white and ensured container is clean
+    <section className="py-16 md:py-24 px-6 max-w-4xl mx-auto bg-white">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-extrabold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-slate-900 to-slate-600 dark:from-white dark:to-slate-400">
+        <h2 className="text-3xl md:text-4xl font-extrabold mb-4 text-slate-900">
           Common Questions
         </h2>
-        <p className="text-slate-500 dark:text-slate-400">
+        <p className="text-slate-500 max-w-lg mx-auto">
           Everything you need to know about our product and billing.
         </p>
       </div>
 
-      <div className="space-y-4" data-aos="fade-up">
+      <div className="space-y-3">
         {faqData.map((item, idx) => {
           const isOpen = openIndex === idx;
           
           return (
             <div
               key={idx}
-              className={`group rounded-2xl border transition-all duration-300 ${
+              className={`rounded-2xl border transition-all duration-200 ${
                 isOpen 
-                  ? "bg-slate-50 border-slate-200 dark:bg-white/10 dark:border-white/20" 
-                  : "bg-white border-black/5 dark:bg-white/5 dark:border-white/5 hover:border-slate-300 dark:hover:border-white/10"
+                  ? "bg-slate-50/50 border-slate-200 shadow-sm" 
+                  : "bg-white border-slate-100 hover:border-slate-200 hover:shadow-sm"
               }`}
             >
               <button
                 onClick={() => toggleFAQ(idx)}
                 aria-expanded={isOpen}
-                className="flex justify-between items-center p-6 w-full text-left outline-none"
+                className="flex justify-between items-center p-5 md:p-6 w-full text-left outline-none"
               >
                 <div className="flex items-center gap-4">
-                  <HelpCircle className={`w-5 h-5 transition-colors ${isOpen ? "text-cyan-500" : "text-slate-400"}`} />
-                  <span className="font-semibold text-slate-800 dark:text-slate-200">
+                  <div className={`p-2 rounded-lg transition-colors ${isOpen ? "bg-cyan-100 text-cyan-600" : "bg-slate-100 text-slate-400"}`}>
+                    <HelpCircle className="w-5 h-5" />
+                  </div>
+                  <span className={`font-medium md:font-semibold transition-colors ${isOpen ? "text-slate-900" : "text-slate-700"}`}>
                     {item.question}
                   </span>
                 </div>
                 
                 <ChevronDown 
-                  className={`w-5 h-5 text-slate-400 transition-transform duration-300 ease-out ${
-                    isOpen ? "rotate-180 text-cyan-500" : ""
+                  className={`w-5 h-5 text-slate-400 transition-transform duration-300 ${
+                    isOpen ? "rotate-180 text-cyan-600" : ""
                   }`} 
                 />
               </button>
@@ -58,7 +61,7 @@ export default function FAQ() {
                 }`}
               >
                 <div className="overflow-hidden">
-                  <div className="px-15 pl-[3.5rem] pr-6 pb-6 text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                  <div className="pl-[4.25rem] pr-6 pb-6 text-slate-600 leading-relaxed text-sm md:text-base">
                     {item.answer}
                   </div>
                 </div>

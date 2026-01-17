@@ -2,13 +2,13 @@ import { workData } from "@/data/homepage";
 
 export default function Work() {
   return (
-    // Reduced padding from py-28 to py-20
-    <section id="work" className="py-12 md:py-20 px-6 bg-slate-900 dark:bg-slate-950 text-white transition-colors duration-500">
-      <div className="max-w-6xl mx-auto"> {/* Narrowed max-width slightly for better focus */}
-
+    <section id="work" className="py-12 md:py-20 px-6 bg-slate-900 text-white">
+      <div className="max-w-6xl mx-auto">
+        
         <div className="mb-10 md:mb-16">
-          <p className="text-blue-400 font-mono text-xs uppercase tracking-widest mb-2">Selected Projects</p>
-          {/* Scaled down from 8xl to 6xl */}
+          <p className="text-blue-400 font-mono text-xs uppercase tracking-widest mb-2">
+            Selected Projects
+          </p>
           <h2 className="text-4xl md:text-6xl font-bold text-white tracking-tighter">
             {workData.heading}
           </h2>
@@ -26,7 +26,6 @@ export default function Work() {
                   <span className="hidden md:block text-slate-500 font-mono text-base">
                     0{idx + 1}
                   </span>
-                  {/* Scaled down from 6xl to 4xl */}
                   <h3 className="text-2xl md:text-4xl font-semibold group-hover:translate-x-3 transition-transform duration-500 ease-out">
                     {project.title}
                   </h3>
@@ -37,12 +36,10 @@ export default function Work() {
               </div>
 
               <div className="mt-4 flex justify-between items-end">
-                {/* Scaled down text and max-width */}
                 <p className="max-w-md text-slate-400 text-sm md:text-base leading-relaxed opacity-100 md:opacity-60 group-hover:opacity-100 transition-opacity duration-500">
                   {project.description}
                 </p>
                 
-                {/* Scaled down button from w-16 to w-12 */}
                 <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500 transform group-hover:rotate-45">
                   <svg 
                     width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
@@ -54,7 +51,6 @@ export default function Work() {
               </div>
 
               {project.image && (
-                // Reduced hover image size from 450px to 320px
                 <div className="hidden lg:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] aspect-[4/3] pointer-events-none opacity-0 group-hover:opacity-100 scale-75 group-hover:scale-100 transition-all duration-500 z-50">
                    <img
                     src={project.image}
